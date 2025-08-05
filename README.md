@@ -18,3 +18,16 @@ This is a backend service for a task management application, built using Spring 
 ```bash
 docker-compose up -d
 ```
+
+### ✅ Part 1: Initial
+
+- Initial of project
+- Docker Compose
+- Test Controller: `ping`
+
+### ✅ Part 2: JWT Authentication
+
+- Implemented JWT-based login/register system
+- AuthController: `auth/login`, `auth/register`
+- JwtService handles token generation and validation
+- JwtFilter protects private endpoints
