@@ -30,3 +30,4 @@ docker-compose up -d
 - Implemented JWT-based login/register system
 - AuthController: `auth/login`, `auth/register`
 - JwtService handles token generation and validation
+- JwtFilter protects private endpoints
