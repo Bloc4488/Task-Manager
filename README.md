@@ -37,4 +37,4 @@ docker-compose up -d
 - Created Task entity with User relation
 - Implemented TaskRequest/TaskResponse DTOs
 - Added TaskService with create, getAll, update, delete
-- Added TaskController with secured endpoints
+- Added TaskController: `tasks/`
