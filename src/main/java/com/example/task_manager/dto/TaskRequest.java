@@ -8,4 +8,5 @@ public class TaskRequest {
     private String title;
     private String description;
     private Status status;
+    private Long categoryId;
 }
