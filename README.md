@@ -31,3 +31,10 @@ docker-compose up -d
 - AuthController: `auth/login`, `auth/register`
 - JwtService handles token generation and validation
 - JwtFilter protects private endpoints
+
+### ✅ Part 3: Task CRUD
+
+- Created Task entity with User relation
+- Implemented TaskRequest/TaskResponse DTOs
+- Added TaskService with create, getAll, update, delete
+- Added TaskController: `tasks/`
