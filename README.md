@@ -38,3 +38,10 @@ docker-compose up -d
 - Implemented TaskRequest/TaskResponse DTOs
 - Added TaskService with create, getAll, update, delete
 - Added TaskController: `tasks/`
+
+### ✅ Part 4: Roles, Authorization and Filtering
+
+- Added USER and ADMIN roles
+- Restricted admin endpoints via role-based access
+- Implemented filtering tasks by status with GET `/api/tasks?status=TODO`
+- Added basic global exception handler
