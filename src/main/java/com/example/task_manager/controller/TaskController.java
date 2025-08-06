@@ -26,7 +26,7 @@ public class TaskController {
         return taskService.createTask(taskRequest);
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public List<TaskResponse> getAll(@RequestParam(required = false)Status status) {
         return taskService.getTasks(status);
     }
@@ -36,22 +36,21 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @GetMapping
-    public Page<TaskResponse> getAll(@RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     @RequestParam(defaultValue = "id,asc") String sort) {
-        String[] sortParams = sort.split(",");
-        Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
-        Sort sortBy =  Sort.by(direction, sortParams[0]);
-        Pageable pageable = PageRequest.of(page, size, sortBy);
-        return taskService.getTasksPaged(pageable);
-    }
-
     @GetMapping("/filter")
     public List<TaskResponse> filterTasks(@RequestParam(required = false) Status status,
                                           @RequestParam(required = false) Long categoryId,
-                                          @RequestParam(required = false)LocalDateTime createdBefore) {
+                                          @RequestParam(required = false) LocalDateTime createdBefore) {
         return taskService.filterTask(status, categoryId, createdBefore);
+    }
+
+    @GetMapping("/paged")
+    public Page<TaskResponse> getTasksPaged(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size,
+                                            @RequestParam(defaultValue = "id,asc") String sort) {
+        String[] sortParams = sort.split(",");
+        Sort sortBy = Sort.by(Sort.Direction.fromString(sortParams[1]), sortParams[0]);
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        return taskService.getTasksPaged(pageable);
     }
 
     @PutMapping("/{id}")

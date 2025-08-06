@@ -29,8 +29,7 @@ public class TaskService {
     private final CategoryRepository categoryRepository;
 
     public TaskResponse createTask(TaskRequest request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = getCurrentUser();
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow();
 
         Task task = Task.builder()
@@ -49,8 +48,7 @@ public class TaskService {
     }
 
     public List<TaskResponse> getTasks(Status status) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User  user = getCurrentUser();
 
         List<Task> tasks = (status != null)
                 ? taskRepository.findAllByUserIdAndStatus(user.getId(), status)
@@ -88,8 +86,7 @@ public class TaskService {
     }
 
     public List<TaskResponse> filterTask(Status status, Long categoryId, LocalDateTime createdBefore) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = getCurrentUser();
 
         return taskRepository.findAll().stream()
                 .filter(task -> task.getUser().equals(user))
@@ -101,30 +98,33 @@ public class TaskService {
     }
 
     public Page<TaskResponse> getTasksPaged(Pageable pageable) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = getCurrentUser();
 
         return taskRepository.findAllByUserId(user.getId(), pageable)
                 .map(this::mapToResponse);
     }
 
     private TaskResponse mapToResponse(Task task) {
-        TaskResponse taskResponse = new TaskResponse();
-        taskResponse.setId(task.getId());
-        taskResponse.setTitle(task.getTitle());
-        taskResponse.setDescription(task.getDescription());
-        taskResponse.setStatus(task.getStatus());
-        taskResponse.setCreatedAt(task.getCreatedAt());
-        taskResponse.setUpdatedAt(task.getUpdatedAt());
-        taskResponse.setCategoryName(task.getCategory().getName());
-        taskResponse.setUserEmail(task.getUser().getEmail());
-        return taskResponse;
+        return TaskResponse.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .userEmail(task.getUser().getEmail())
+                .categoryName(task.getCategory().getName())
+                .createdAt(task.getCreatedAt())
+                .updatedAt(task.getUpdatedAt())
+                .build();
     }
 
     private void checkTaskOwnership(Task task) throws AccessDeniedException {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!task.getUser().getEmail().equals(email)) {
+        if (!task.getUser().getEmail().equals(getCurrentUser().getEmail())) {
             throw new AccessDeniedException("You are not allowed to modify this task");
         }
+    }
+
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email).orElseThrow();
     }
 }
