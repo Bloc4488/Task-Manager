@@ -2,6 +2,7 @@ package com.example.task_manager.controller;
 
 import com.example.task_manager.dto.TaskRequest;
 import com.example.task_manager.dto.TaskResponse;
+import com.example.task_manager.entity.Status;
 import com.example.task_manager.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
@@ -20,8 +21,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<TaskResponse> getAll() {
-        return taskService.getTasks();
+    public List<TaskResponse> getAll(@RequestParam(required = false)Status status) {
+        return taskService.getTasks(status);
     }
 
     @PutMapping("/{id}")

@@ -2,6 +2,7 @@ package com.example.task_manager.service;
 
 import com.example.task_manager.dto.TaskRequest;
 import com.example.task_manager.dto.TaskResponse;
+import com.example.task_manager.entity.Status;
 import com.example.task_manager.entity.Task;
 import com.example.task_manager.entity.User;
 import com.example.task_manager.repository.TaskRepository;
@@ -39,13 +40,15 @@ public class TaskService {
         return mapToResponse(task);
     }
 
-    public List<TaskResponse> getTasks() {
+    public List<TaskResponse> getTasks(Status status) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow();
-        return taskRepository.findAllByUserId(user.getId())
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+
+        List<Task> tasks = (status != null)
+                ? taskRepository.findAllByUserIdAndStatus(user.getId(), status)
+                : taskRepository.findAllByUserId(user.getId());
+
+        return tasks.stream().map(this::mapToResponse).toList();
     }
 
     public TaskResponse updateTask(Long id, TaskRequest request) {
