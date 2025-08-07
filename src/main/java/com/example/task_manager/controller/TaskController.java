@@ -22,7 +22,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public TaskResponse create(@RequestBody TaskRequest taskRequest) {
+    public TaskResponse create(@RequestBody TaskRequest taskRequest) throws AccessDeniedException {
         return taskService.createTask(taskRequest);
     }
 
