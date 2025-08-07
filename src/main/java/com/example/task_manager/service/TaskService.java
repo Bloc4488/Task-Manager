@@ -28,9 +28,9 @@ public class TaskService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
-    public TaskResponse createTask(TaskRequest request) {
+    public TaskResponse createTask(TaskRequest request) throws AccessDeniedException {
         User user = getCurrentUser();
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow();
+        Category category = checkCategoryOwnership(request.getCategoryId(), user);
 
         Task task = Task.builder()
                 .title(request.getTitle())
@@ -66,7 +66,7 @@ public class TaskService {
     public TaskResponse updateTask(Long id, TaskRequest request) throws AccessDeniedException {
         Task task = taskRepository.findById(id).orElseThrow();
         checkTaskOwnership(task);
-        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow();
+        Category category = checkCategoryOwnership(request.getCategoryId(), task.getUser());
 
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
@@ -121,6 +121,15 @@ public class TaskService {
         if (!task.getUser().getEmail().equals(getCurrentUser().getEmail())) {
             throw new AccessDeniedException("You are not allowed to modify this task");
         }
+    }
+
+    private Category checkCategoryOwnership(Long categoryId, User user) throws AccessDeniedException {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        if (!category.getUser().equals(user)) {
+            throw new AccessDeniedException("You are not allowed to use this category");
+        }
+        return category;
     }
 
     private User getCurrentUser() {
