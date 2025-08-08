@@ -1,6 +1,7 @@
 package com.example.task_manager.service;
 
 import com.example.task_manager.entity.User;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -46,8 +47,13 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        try {
+            final String username = extractUsername(token);
+            return username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        } catch (Exception ex) {
+            return false;
+        }
+
     }
 
     private boolean isTokenExpired(String token) {
