@@ -16,6 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,6 +69,8 @@ public class TaskServiceTest {
                 .title("Task")
                 .description("Task Description")
                 .category(category)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .user(user)
                 .status(Status.TODO)
                 .build();
@@ -226,5 +232,84 @@ public class TaskServiceTest {
                 t.getDescription().equals("Task Description Updated") &&
                 t.getStatus() == Status.IN_PROGRESS &&
                 t.getCategory().equals(category)));
+    }
+
+    @Test
+    void updateTask_ShouldThrowAccessDeniedException_WhenTaskNotOwned() {
+        TaskRequest request = new TaskRequest();
+        request.setTitle("Updated Task");
+        request.setDescription("Task Description Updated");
+        request.setStatus(Status.IN_PROGRESS);
+        request.setCategoryId(1L);
+
+        User otherUser = User.builder().id(2L).email("other@example.com").build();
+        Task otherTask = Task.builder().id(1L).title("Task Title").description("Task Description").user(otherUser).category(category).build();
+
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(otherTask));
+
+        assertThrows(AccessDeniedException.class, () -> taskService.updateTask(1L, request));
+        verify(taskRepository).findById(1L);
+        verify(categoryRepository, never()).findById(any());
+        verify(taskRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteTask_ShouldDeleteTask_WhenTaskExistsAndOwned() throws AccessDeniedException {
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        doNothing().when(taskRepository).deleteById(1L);
+
+        taskService.deleteTask(1L);
+
+        verify(taskRepository).deleteById(1L);
+        verify(taskRepository).deleteById(1L);
+    }
+
+    @Test
+    void deleteTask_ShouldThrowAccessDeniedException_WhenTaskNotOwned() {
+        User otherUser = User.builder().id(2L).email("other@example.com").build();
+        Task otherTask = Task.builder().id(1L).title("Task Other").user(otherUser).category(category).build();
+
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(otherTask));
+
+        assertThrows(AccessDeniedException.class, () -> taskService.deleteTask(1L));
+        verify(taskRepository).findById(1L);
+        verify(taskRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void filterTask_ShouldReturnFilteredList_WhenValidParameters() {
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(taskRepository.findAll()).thenReturn(List.of(task));
+
+        List<TaskResponse> responses = taskService.filterTask(Status.TODO, 1L, LocalDateTime.now().plusDays(1));
+
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+        assertEquals("Task", responses.get(0).getTitle());
+
+        verify(userRepository).findByEmail("john@example.com");
+        verify(taskRepository).findAll();
+    }
+
+    @Test
+    void getTasksPaged_ShouldReturnPagedTasks_WhenUserExists() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Task> taskPage = new PageImpl<>(List.of(task), pageable, 1);
+
+        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(taskRepository.findAllByUserId(1L, pageable)).thenReturn(taskPage);
+
+        Page<TaskResponse> responses = taskService.getTasksPaged(pageable);
+
+        assertNotNull(responses);
+        assertEquals(1, responses.getTotalPages());
+        assertEquals(1, responses.getTotalElements());
+        assertEquals("Task", responses.getContent().get(0).getTitle());
+
+        verify(userRepository).findByEmail("john@example.com");
+        verify(taskRepository).findAllByUserId(1L, pageable);
     }
 }
