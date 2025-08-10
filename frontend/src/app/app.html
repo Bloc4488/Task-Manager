@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+  <a routerLink="/" class="title">Task Manager</a>
+  <span class="spacer"></span>
+  @if (!authService.isLoggedIn()) {
+    <button mat-button routerLink="/login">Login</button>
+    <button mat-button routerLink="/register">Register</button>
+  }
+  @if (authService.isLoggedIn()) {
+    <button mat-button routerLink="/categories">Categories</button>
+    <button mat-button routerLink="/tasks">Tasks</button>
+    <button mat-button (click)="authService.logout()">Logout</button>
+  }
+</mat-toolbar>
+<router-outlet></router-outlet>

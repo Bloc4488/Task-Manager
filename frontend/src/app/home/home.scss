@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 64px);
+  background-color: #f5f5f5;
+}
+
+.landing-card {
+  width: 400px;
+  padding: 24px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  mat-card-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  mat-card-subtitle {
+    font-size: 16px;
+    color: #666;
+  }
+
+  mat-card-actions {
+    justify-content: space-around;
+  }
+
+  button {
+    min-width: 120px;
+  }
+}
