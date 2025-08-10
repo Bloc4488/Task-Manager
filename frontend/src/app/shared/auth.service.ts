@@ -43,6 +43,19 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  isAdmin(): boolean {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        return decoded.role === 'ADMIN';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     this.router.navigate(['/']);
@@ -64,10 +77,14 @@ export class AuthService {
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred';
-    if (error.status === 400) {
+    if (error.error instanceof Object && error.error.message) {
+      errorMessage = error.error.message;
+    } else if (error.status === 400) {
       errorMessage = 'Invalid input. Please check your email and password.';
     } else if (error.status === 401) {
       errorMessage = 'Invalid email or password.';
+    } else if (error.status === 404) {
+      errorMessage = 'User not found.';
     } else if (error.status === 409) {
       errorMessage = 'Email already exists.';
     } else if (error.status === 0) {
