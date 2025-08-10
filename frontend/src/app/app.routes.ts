@@ -6,6 +6,7 @@ import { Register } from './auth/register/register';
 import { Tasks } from './tasks/tasks';
 import { AccessDenied } from './auth/access-denied/access-denied';
 import { Categories } from './categories/categories';
+import {AdminDashboard} from './admin/admin-dashboard';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'access-denied', component: AccessDenied },
   { path: 'tasks', component: Tasks, canActivate: [AuthGuard] },
   { path: 'categories', component: Categories, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminDashboard, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];

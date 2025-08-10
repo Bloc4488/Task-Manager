@@ -6,6 +6,9 @@
     <button mat-button routerLink="/register">Register</button>
   }
   @if (authService.isLoggedIn()) {
+    @if (authService.isAdmin()) {
+      <button mat-button routerLink="/admin">Admin Dashboard</button>
+    }
     <button mat-button routerLink="/categories">Categories</button>
     <button mat-button routerLink="/tasks">Tasks</button>
     <button mat-button (click)="authService.logout()">Logout</button>
