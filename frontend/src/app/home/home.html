@@ -1,0 +1,23 @@
+<div class="container">
+  <mat-card class="landing-card">
+    <mat-card-header>
+      <mat-card-title>Welcome to Task Manager</mat-card-title>
+      <mat-card-subtitle>Manage your tasks efficiently</mat-card-subtitle>
+    </mat-card-header>
+    @if (!authService.isLoggedIn()) {
+      <mat-card-content>
+        <p>Please log in or register to get started.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/login">Login</button>
+        <button mat-raised-button color="accent" routerLink="/register">Register</button>
+      </mat-card-actions>
+    }
+    @if (authService.isLoggedIn()) {
+      <mat-card-content>
+        <p>You are already logged in. Go to your tasks.</p>
+        <button mat-raised-button color="primary" routerLink="/tasks">View Tasks</button>
+      </mat-card-content>
+    }
+  </mat-card>
+</div>

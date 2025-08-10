@@ -1,0 +1,133 @@
+<div class="container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>{{ isEditing ? 'Edit Task' : 'Add Task' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title">
+          @if (title?.hasError('required')) {
+            <mat-error>Title is required</mat-error>
+          }
+          @if (title?.hasError('minlength')) {
+            <mat-error>Title must be at least 2 characters</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description">
+          @if (description?.hasError('required')) {
+            <mat-error>Description is required</mat-error>
+          }
+          @if (description?.hasError('minlength')) {
+            <mat-error>Description must be at least 3 characters</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+          @if (status?.hasError('required')) {
+            <mat-error>Status is required</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="categoryId">
+            @for (category of categories; track category.id) {
+              <mat-option [value]="category.id">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+          @if (categoryId?.hasError('required')) {
+            <mat-error>Category is required</mat-error>
+          }
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="taskForm.invalid">
+          {{ isEditing ? 'Update' : 'Create' }}
+        </button>
+        <button mat-button color="warn" class="full-width" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="filter-card">
+    <mat-card-header>
+      <mat-card-title>Filter Tasks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Created Before</mat-label>
+          <input matInput type="datetime-local" formControlName="createdBefore">
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" class="full-width">Apply Filter</button>
+        <button mat-button color="warn" class="full-width" (click)="resetFilter()">Reset Filter</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Tasks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="tasks" class="mat-elevation-z2">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let task">{{ task.title }}</td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let task">{{ task.description }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let task">{{ task.status }}</td>
+        </ng-container>
+        <ng-container matColumnDef="categoryName">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let task">{{ task.categoryName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Created At</th>
+          <td mat-cell *matCellDef="let task">{{ task.createdAt | date:'short' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let task">
+            <button mat-button color="primary" (click)="editTask(task)">Edit</button>
+            <button mat-button color="warn" (click)="deleteTask(task.id)">Delete</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="page.totalElements"
+        [pageSize]="page.size"
+        [pageIndex]="page.number"
+        [pageSizeOptions]="[5, 10, 20]"
+        (page)="onPageChange($event)"
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>
