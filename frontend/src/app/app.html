@@ -9,9 +9,17 @@
     @if (authService.isAdmin()) {
       <button mat-button routerLink="/admin">Admin Dashboard</button>
     }
+    <button mat-button routerLink="/profile">Profile</button>
     <button mat-button routerLink="/categories">Categories</button>
     <button mat-button routerLink="/tasks">Tasks</button>
     <button mat-button (click)="authService.logout()">Logout</button>
+    <button mat-button (click)="themeService.toggleTheme()">
+      @if (themeService.isDarkMode() | async) {
+        Light Mode
+      } @else {
+        Dark Mode
+      }
+    </button>
   }
 </mat-toolbar>
 <router-outlet></router-outlet>
