@@ -9,40 +9,40 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>First Name</mat-label>
           <input matInput formControlName="firstName">
-          @if (firstName?.hasError('required')) {
+          @if (firstName.hasError('required')) {
             <mat-error>First name is required</mat-error>
           }
-          @if (firstName?.hasError('minlength')) {
+          @if (firstName.hasError('minlength')) {
             <mat-error>First name must be at least 2 characters</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Last Name</mat-label>
           <input matInput formControlName="lastName">
-          @if (lastName?.hasError('required')) {
+          @if (lastName.hasError('required')) {
             <mat-error>Last name is required</mat-error>
           }
-          @if (lastName?.hasError('minlength')) {
+          @if (lastName.hasError('minlength')) {
             <mat-error>Last name must be at least 2 characters</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input matInput formControlName="email">
-          @if (email?.hasError('required')) {
+          @if (email.hasError('required')) {
             <mat-error>Email is required</mat-error>
           }
-          @if (email?.hasError('email')) {
+          @if (email.hasError('email')) {
             <mat-error>Invalid email format</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Password</mat-label>
           <input matInput type="password" formControlName="password">
-          @if (password?.hasError('required')) {
+          @if (password.hasError('required')) {
             <mat-error>Password is required</mat-error>
           }
-          @if (password?.hasError('minlength')) {
+          @if (password.hasError('minlength')) {
             <mat-error>Password must be at least 6 characters</mat-error>
           }
         </mat-form-field>
