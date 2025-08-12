@@ -4,6 +4,7 @@ import {Observable, tap, throwError} from "rxjs";
 import { AuthRequest, AuthResponse, RegisterRequest } from './models/auth.model';
 import { Router } from '@angular/router';
 import {catchError} from "rxjs/operators";
+import {User} from './models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,6 +29,24 @@ export class AuthService {
         this.router.navigate(['/tasks']);
       }),
         catchError(this.handleError)
+    );
+  }
+
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(`http://localhost:8080/api/users/me`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateUser(user: { firstName: string, lastName: string, email: string}): Observable<User> {
+    return this.http.put<User>(`http://localhost:8080/api/users/me`, user).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  changePassword(passwords: { currentPassword: string, newPassword: string, confirmPassword: string }): Observable<void> {
+    return this.http.put<void>(`http://localhost:8080/api/users/me/password`, passwords).pipe(
+      catchError(this.handleError)
     );
   }
 
