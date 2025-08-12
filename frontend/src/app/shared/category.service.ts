@@ -1,42 +1,53 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import {finalize, Observable, throwError} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Category, CategoryRequest } from './models/category.model';
+import {LoadingService} from './loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
   private apiUrl = 'http://localhost:8080/api/category';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private loadingService: LoadingService) { }
 
   create(category: CategoryRequest): Observable<Category> {
+    this.loadingService.show();
     return this.http.post<Category>(this.apiUrl, category).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   getAll(): Observable<Category[]> {
+    this.loadingService.show();
     return this.http.get<Category[]>(this.apiUrl).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   getById(id: number): Observable<Category> {
+    this.loadingService.show();
     return this.http.get<Category>(`${this.apiUrl}/${id}`).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   update(id: number, category: CategoryRequest): Observable<Category> {
+    this.loadingService.show();
     return this.http.put<Category>(`${this.apiUrl}/${id}`, category).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   delete(id: number): Observable<void> {
+    this.loadingService.show();
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError),
+      finalize(() => this.loadingService.hide())
     );
   }
 

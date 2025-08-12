@@ -60,6 +60,10 @@ html {
     color: var(--mat-sys-on-surface);
   }
 
+  mat-progress-spinner {
+    --mdc-circular-progress-active-indicator-color: var(--mat-sys-primary);
+  }
+
   // Chart.js - upcoming feature
   //canvas {
   //  background-color: var(--mat-sys-surface-container);
@@ -111,6 +115,10 @@ html {
   .mat-paginator {
     background-color: var(--mat-sys-surface-container);
     color: var(--mat-sys-on-surface);
+  }
+
+  mat-progress-spinner {
+    --mdc-circular-progress-active-indicator-color: var(--mat-sys-primary);
   }
 
   // Chart.js - upcoming feature

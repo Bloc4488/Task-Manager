@@ -8,20 +8,20 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Title</mat-label>
           <input matInput formControlName="title">
-          @if (title?.hasError('required')) {
+          @if (title.hasError('required')) {
             <mat-error>Title is required</mat-error>
           }
-          @if (title?.hasError('minlength')) {
+          @if (title.hasError('minlength')) {
             <mat-error>Title must be at least 2 characters</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Description</mat-label>
           <input matInput formControlName="description">
-          @if (description?.hasError('required')) {
+          @if (description.hasError('required')) {
             <mat-error>Description is required</mat-error>
           }
-          @if (description?.hasError('minlength')) {
+          @if (description.hasError('minlength')) {
             <mat-error>Description must be at least 3 characters</mat-error>
           }
         </mat-form-field>
@@ -32,7 +32,7 @@
               <mat-option [value]="status">{{ status }}</mat-option>
             }
           </mat-select>
-          @if (status?.hasError('required')) {
+          @if (status.hasError('required')) {
             <mat-error>Status is required</mat-error>
           }
         </mat-form-field>
@@ -43,14 +43,16 @@
               <mat-option [value]="category.id">{{ category.name }}</mat-option>
             }
           </mat-select>
-          @if (categoryId?.hasError('required')) {
+          @if (categoryId.hasError('required')) {
             <mat-error>Category is required</mat-error>
           }
         </mat-form-field>
         <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="taskForm.invalid">
           {{ isEditing ? 'Update' : 'Create' }}
         </button>
-        <button mat-button color="warn" class="full-width" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+        @if (isEditing) {
+          <button mat-button color="warn" class="full-width" (click)="resetForm()">Cancel</button>
+        }
       </form>
     </mat-card-content>
   </mat-card>
@@ -65,14 +67,18 @@
           <mat-label>Status</mat-label>
           <mat-select formControlName="status">
             <mat-option value="">All</mat-option>
-            <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Category</mat-label>
           <mat-select formControlName="categoryId">
             <mat-option value="">All</mat-option>
-            <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
+            @for (category of categories; track category.id) {
+              <mat-option [value]="category.id">{{ category.name }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
