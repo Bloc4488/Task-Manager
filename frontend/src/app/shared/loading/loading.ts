@@ -10,8 +10,8 @@ import { LoadingService } from '../loading.service';
     CommonModule,
     MatProgressSpinnerModule
   ],
-  templateUrl: './loading.component.html',
-  styleUrl: './loading.component.scss'
+  templateUrl: './loading.html',
+  styleUrl: './loading.scss'
 })
 export class LoadingComponent {
   loading$: any;
